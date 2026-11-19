@@ -37,24 +37,16 @@
   .cover .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);margin:0}
 
   section.faq{padding-top:50px;margin-top:40px;border-top:1px solid var(--line)}
-  .topics{display:grid;gap:12px;margin-top:24px}
-  details.t{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-  details.t[open]{border-color:var(--yellow)}
-  details.t summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:14px;padding:18px 20px;font-weight:500;font-size:18px}
-  details.t summary::-webkit-details-marker{display:none}
-  .ic{flex:none;width:38px;height:38px;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center}
-  .q{flex:1}
-  .len{flex:none;font-size:14px;color:var(--dim);font-weight:400}
-  details.t summary::after{content:"+";color:var(--yellow);font-size:24px;line-height:1;flex:none}
-  details.t[open] summary::after{content:"\2212"}
-  .body{padding:0 20px 20px}
-  .body p{color:var(--dim);margin:14px 0 0;font-size:16px}
+  .topics{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:28px}
+  .t{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .t h3{font-size:18px;font-weight:600;margin:0;display:flex;justify-content:space-between;gap:10px}
+  .t .len{flex:none;font-size:14px;color:var(--dim);font-weight:400}
+  .t .video{border-radius:10px}
+  .t .play{width:56px;height:56px}
 
   .contact{margin-top:50px;text-align:center;color:var(--dim);font-size:15px}
-  @media (max-width:560px){
-    details.t summary{padding:16px;font-size:17px;gap:12px}
-    .body{padding:0 16px 16px}
-    .len{display:none}
+  @media (max-width:640px){
+    .topics{grid-template-columns:1fr}
   }
 </style>
 </head>
@@ -72,7 +64,7 @@
 
   <section class="faq">
     <h2 class="center">Veelgestelde vragen, beantwoord in een korte video</h2>
-    <p class="center dim">Klik op een onderwerp om de video te bekijken.</p>
+    <p class="center dim">Klik op een video om hem af te spelen.</p>
     <div class="topics" id="topics"></div>
   </section>
 
@@ -120,21 +112,12 @@ try{
 
 videoBox($('mainVideo'), PAGE.mainVideo.id, PAGE.mainVideo.label);
 
-$('topics').innerHTML = PAGE.topics.map((t,i)=>`<details class="t" data-i="${i}">
-  <summary><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="#1B2318"><path d="M8 5v14l11-7z"/></svg></span><span class="q">${esc(t.q)}</span>${t.len?`<span class="len">${esc(t.len)}</span>`:''}</summary>
-  <div class="body"><div class="video"></div><p>${esc(t.about)}</p></div>
-</details>`).join('');
-
-/* één onderwerp tegelijk open; video pas laden bij openen, stoppen bij sluiten */
-document.querySelectorAll('details.t').forEach(el=>{
-  el.addEventListener('toggle',()=>{
-    const t = PAGE.topics[el.dataset.i], box = el.querySelector('.video');
-    if(el.open){
-      document.querySelectorAll('details.t[open]').forEach(o=>{ if(o!==el) o.open=false; });
-      videoBox(box, t.id, t.q);
-    } else box.innerHTML = '';
-  });
-});
+/* raster van 2 kolommen: titel met de video eronder; YouTube laadt pas na klikken */
+$('topics').innerHTML = PAGE.topics.map((t,i)=>`<div class="t">
+  <h3><span>${esc(t.q)}</span>${t.len?`<span class="len">${esc(t.len)}</span>`:''}</h3>
+  <div class="video" data-i="${i}"></div>
+</div>`).join('');
+document.querySelectorAll('.t .video').forEach(box=>{ const t = PAGE.topics[box.dataset.i]; videoBox(box, t.id, ''); });
 </script>
 </body>
 </html>
