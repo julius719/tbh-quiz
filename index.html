@@ -397,6 +397,7 @@ const CONFIG = {
        voordat de volgende vraag komt. */
   video: {
     customerCode: "",
+    demo: true,   // dummy-clips (10 sec) op elke lege plek, tot Julius opneemt. Zet op false voor placeholders.
     intro:  { uid:"", label:"Intro: wie is Julius en wat levert de quiz op", skip:"Start de quiz" },
     steps: {
       pain:   { uid:"", showAt:null, label:"Vraag: levert je vermogen genoeg op?", replies:{ yes:"", no:"" } },
@@ -557,6 +558,13 @@ $('consent').addEventListener('change',()=>save());
 
 /* ============================ video-quiz player ============================ */
 const VQ = CONFIG.video;
+if(VQ.demo){   // vult alleen lege clips; echte uid's gaan altijd voor
+  const D = 'https://test-videos.co.uk/vids/', BBB = D+'bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4',
+        DEMO = [D+'jellyfish/mp4/h264/720/Jellyfish_720_10s_1MB.mp4', D+'sintel/mp4/h264/720/Sintel_720_10s_1MB.mp4'];
+  VQ.intro.uid ||= BBB; VQ.result.uid ||= BBB;
+  Object.values(VQ.steps).forEach((s,i)=>{ s.uid ||= DEMO[i%2]; });
+  VQ.steps.pain.replies.yes ||= 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';   // voorbeeld reactieclip
+}
 const ICON_MUTE = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1B2318" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m23 9-6 6M17 9l6 6"/></svg>';
 const ICON_PLAY = '<svg width="24" height="24" viewBox="0 0 24 24" fill="#1B2318"><path d="M8 5v14l11-7z"/></svg>';
 
