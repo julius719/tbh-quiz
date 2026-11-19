@@ -196,7 +196,7 @@
       </div>
       <button class="btn-y" onclick="openQuiz()">
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1B2318" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/></svg>
-        Vul de Quiz in
+        <span id="quizLabel">Vul de Quiz in</span>
       </button>
       <div class="resume" id="resumeNote" style="display:none">Je was al begonnen. Je gaat verder waar je gebleven was.</div>
       <div class="proof"><span><b>5,0</b> op Google</span><span><b>91</b> Nederlandse kopers begeleid</span><span>Klaar in ongeveer 2 minuten</span></div>
@@ -363,6 +363,8 @@ const CONFIG = {
   ebookUrl: "https://thebalihouses.com",
   autoOpenQuiz: true,          // quiz opent als popup na het laden
   autoOpenDelay: 5000,         // na 5 seconden
+  resumeDelay: 1500,           // terugkerende bezoeker die al begonnen was: popup sneller terug
+  thankYouUrl: "bedankt.html", // pagina na het inplannen van het gesprek (FAQ-video's)
   routing: { minBudget: 50000, juliusFrom: 1000000 },
 
   // Google reviews: vervang door 6 echte reviews (naam, tekst). Lege tekst = placeholder.
@@ -483,8 +485,9 @@ function restore(d){
 
   const d = load();
   if(d && d.done && d.done.input){ restore(d); renderResults(d.done.input, d.done.route); return; }
-  if(d){ restore(d); if(cur>0 || d.f && d.f.first) $('resumeNote').style.display='block'; }
-  if(CONFIG.autoOpenQuiz) setTimeout(()=>{ if(!$('modal').classList.contains('open') && $('results').style.display!=='block') openQuiz(); }, CONFIG.autoOpenDelay);
+  let resuming = false;
+  if(d){ restore(d); if(cur>0 || d.f && d.f.first){ resuming = true; markResume(); } }
+  if(CONFIG.autoOpenQuiz) setTimeout(()=>{ if(!$('modal').classList.contains('open') && $('results').style.display!=='block') openQuiz(); }, resuming ? CONFIG.resumeDelay : CONFIG.autoOpenDelay);
 })();
 
 /* --- quiz interactie --- */
@@ -506,7 +509,7 @@ function openQuiz(){ $('modal').classList.add('open'); document.body.style.overf
 function closeQuiz(){
   $('modal').classList.remove('open'); document.body.style.overflow='';
   if(cur>=QUESTIONS){ if(lastInput) renderResults(lastInput, lastRoute); return; }
-  save(); if(cur>0 || $('first').value) $('resumeNote').style.display='block';
+  save(); if(cur>0 || $('first').value) markResume();
 }
 document.addEventListener('keydown',e=>{
   if(!$('modal').classList.contains('open')) return;
@@ -637,15 +640,24 @@ function popupEbook(i){
     <a class="go" href="${CONFIG.ebookUrl}" target="_blank" rel="noopener">Download het e-book</a>
   </div>`;
 }
+function markResume(){ $('resumeNote').style.display='block'; $('quizLabel').textContent='Ga verder met de quiz'; }
+
 /* ---------------------------------------------------------------------------
    AGENDA: hier koppelt de developer de eigen booking-tool (popup).
    lastInput bevat voornaam, e-mail, telefoon en alle antwoorden; lastRoute is
    'julius' (budget vanaf CONFIG.routing.juliusFrom) of 'agent'.
    Tot die tijd opent de knop de contactpagina uit CONFIG.booking.
+
+   Zodra iemand een gesprek heeft ingepland: roep bookingDone() aan.
+   Die stuurt de bezoeker door naar de bedankpagina met de FAQ-video's.
    --------------------------------------------------------------------------- */
 function openBooking(){
   const url = CONFIG.booking[lastRoute==='julius'?'julius':'agent'];
   window.open(url, '_blank', 'noopener');
+}
+function bookingDone(){
+  try{ const d = JSON.parse(localStorage.getItem(KEY)||'{}'); d.booked = new Date().toISOString(); localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){}
+  location.href = CONFIG.thankYouUrl;
 }
 function renderResults(input, route){
   lastInput = input; lastRoute = route;

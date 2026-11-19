@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Je gesprek staat gepland | The Bali Houses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#1B2318; --panel:#26311F; --cream:#F3EEE3; --dim:#B8B5A5; --line:rgba(243,238,227,.12);
+    --yellow:#E4CE9A; --yellow-2:#EED9A8; --green:#1F4A3F; --radius:16px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--cream);font:17px/1.6 "Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+  h1,h2,h3{font-weight:600;line-height:1.2;margin:0 0 .5em}
+  h1{font-size:clamp(30px,4.6vw,46px)}
+  h2{font-size:clamp(24px,3.2vw,32px)}
+  p{margin:0 0 1em}
+  a{color:inherit}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 20px 80px}
+  .brand{font-weight:600;font-size:22px;text-align:center;padding:20px 0 6px}
+  .center{text-align:center}
+  .dim{color:var(--dim)}
+  .small{font-size:14px}
+  .check{width:56px;height:56px;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center;margin:20px auto 18px}
+  .hero{text-align:center;padding:10px 0 30px}
+  .hero p{max-width:680px;margin:0 auto 26px;font-size:clamp(17px,2vw,19px)}
+
+  .video{position:relative;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,#2A3A2A,#3E5A49);border:1px solid var(--line)}
+  .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .video .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--dim)}
+  .video img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .video .cover{position:absolute;inset:0;cursor:pointer;background:linear-gradient(transparent 50%,rgba(0,0,0,.5))}
+  .play{width:72px;height:72px;border-radius:50%;background:rgba(243,238,227,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+  .cover .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);margin:0}
+
+  section.faq{padding-top:50px;margin-top:40px;border-top:1px solid var(--line)}
+  .topics{display:grid;gap:12px;margin-top:24px}
+  details.t{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  details.t[open]{border-color:var(--yellow)}
+  details.t summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:14px;padding:18px 20px;font-weight:500;font-size:18px}
+  details.t summary::-webkit-details-marker{display:none}
+  .ic{flex:none;width:38px;height:38px;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center}
+  .q{flex:1}
+  .len{flex:none;font-size:14px;color:var(--dim);font-weight:400}
+  details.t summary::after{content:"+";color:var(--yellow);font-size:24px;line-height:1;flex:none}
+  details.t[open] summary::after{content:"\2212"}
+  .body{padding:0 20px 20px}
+  .body p{color:var(--dim);margin:14px 0 0;font-size:16px}
+
+  .contact{margin-top:50px;text-align:center;color:var(--dim);font-size:15px}
+  @media (max-width:560px){
+    details.t summary{padding:16px;font-size:17px;gap:12px}
+    .body{padding:0 16px 16px}
+    .len{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="brand">TheBaliHouses</div>
+
+<main class="wrap">
+  <div class="hero">
+    <div class="check"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1B2318" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h1 id="title">Je gesprek staat gepland</h1>
+    <p class="dim">Je ontvangt een bevestiging per e-mail. Bekijk hieronder alvast de antwoorden op de vragen die we het vaakst krijgen. Dan gebruiken we het gesprek zelf voor de projecten die bij jou passen.</p>
+  </div>
+
+  <div class="video" id="mainVideo"></div>
+
+  <section class="faq">
+    <h2 class="center">Veelgestelde vragen, beantwoord in een korte video</h2>
+    <p class="center dim">Klik op een onderwerp om de video te bekijken.</p>
+    <div class="topics" id="topics"></div>
+  </section>
+
+  <p class="contact">Wil je je gesprek verzetten of heb je een vraag die hier niet tussen staat? <a href="https://thebalihouses.com/contact" target="_blank" rel="noopener">Neem contact met ons op</a>.</p>
+</main>
+
+<script>
+/* =========================================================================
+   CONFIG: vul per video het YouTube-id in (het deel na "v=" in de link).
+   Leeg id = er staat een vak "Video volgt" tot de video er is.
+   ========================================================================= */
+const PAGE = {
+  mainVideo: { id:"", label:"Video van Julius: wat je op deze pagina vindt" },
+  topics: [
+    { q:"Hoe werkt leasehold?",                         id:"", len:"", about:"Wat leasehold is, hoe lang het loopt, hoe verlenging werkt en waar je in het contract op let." },
+    { q:"Hoe werkt freehold?",                          id:"", len:"", about:"Wat freehold is en waarom het voor buitenlanders anders werkt dan voor Indonesiërs." },
+    { q:"Heb ik een PT PMA nodig?",                     id:"", len:"", about:"Wanneer je een Indonesisch bedrijf (PT PMA) nodig hebt en wanneer je in privénaam kunt kopen." },
+    { q:"Hoe werkt het beheer van mijn villa?",         id:"", len:"", about:"Wat de beheermaatschappij doet: verhuur, gasten, schoonmaak en onderhoud, en wat dat kost." },
+    { q:"Hoe ontvang ik mijn huurinkomsten?",           id:"", len:"", about:"Hoe de opbrengst van je villa op je Nederlandse rekening komt en hoe vaak er wordt uitbetaald." },
+    { q:"Hoe zit het met belasting?",                   id:"", len:"", about:"Welke belasting je in Indonesië betaalt en wat dit betekent voor je aangifte in Nederland." },
+    { q:"Hoe veilig is mijn geld tijdens de bouw?",     id:"", len:"", about:"Hoe betalingen tijdens de bouw zijn opgebouwd en hoe wij de ontwikkelaar controleren." },
+    { q:"Hoe verloopt de aankoop van begin tot eind?",  id:"", len:"", about:"Alle stappen van het eerste gesprek tot de sleuteloverdracht, inclusief notaris en due diligence." },
+    { q:"Kan ik mijn villa later weer verkopen?",       id:"", len:"", about:"Hoe doorverkoop werkt en wat er met de resterende looptijd van je leasehold gebeurt." }
+  ]
+};
+
+const $ = id => document.getElementById(id);
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+const PLAY = '<div class="play"><svg width="28" height="28" viewBox="0 0 24 24" fill="#F3EEE3"><path d="M8 5v14l11-7z"/></svg></div>';
+const embed = id => `<iframe src="https://www.youtube-nocookie.com/embed/${esc(id)}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+
+/* video-vak: thumbnail met play-knop, laadt YouTube pas na klikken */
+function videoBox(el, id, label){
+  if(!id){ el.innerHTML = `<div class="ph">${PLAY}<span>${esc(label)}</span><span class="small">Video volgt</span></div>`; return; }
+  el.innerHTML = `<img src="https://i.ytimg.com/vi/${esc(id)}/hqdefault.jpg" alt=""><div class="cover" role="button" aria-label="Video afspelen">${PLAY}</div>`;
+  el.querySelector('.cover').addEventListener('click',()=>{ el.innerHTML = embed(id); });
+}
+
+/* voornaam uit de quiz, als die in deze browser is ingevuld */
+try{
+  const d = JSON.parse(localStorage.getItem('tbh_quiz_v2')||'null');
+  const first = d && (d.done && d.done.input && d.done.input.first || d.f && d.f.first);
+  if(first) $('title').textContent = 'Je gesprek staat gepland, ' + first;
+}catch(e){}
+
+videoBox($('mainVideo'), PAGE.mainVideo.id, PAGE.mainVideo.label);
+
+$('topics').innerHTML = PAGE.topics.map((t,i)=>`<details class="t" data-i="${i}">
+  <summary><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="#1B2318"><path d="M8 5v14l11-7z"/></svg></span><span class="q">${esc(t.q)}</span>${t.len?`<span class="len">${esc(t.len)}</span>`:''}</summary>
+  <div class="body"><div class="video"></div><p>${esc(t.about)}</p></div>
+</details>`).join('');
+
+/* één onderwerp tegelijk open; video pas laden bij openen, stoppen bij sluiten */
+document.querySelectorAll('details.t').forEach(el=>{
+  el.addEventListener('toggle',()=>{
+    const t = PAGE.topics[el.dataset.i], box = el.querySelector('.video');
+    if(el.open){
+      document.querySelectorAll('details.t[open]').forEach(o=>{ if(o!==el) o.open=false; });
+      videoBox(box, t.id, t.q);
+    } else box.innerHTML = '';
+  });
+});
+</script>
+</body>
+</html>
