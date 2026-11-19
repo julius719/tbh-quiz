@@ -42,7 +42,36 @@
   /* hero */
   .hero{padding:24px 0 40px;text-align:center}
   .hero p.sub{color:var(--dim);font-size:clamp(17px,2vw,20px);max-width:760px;margin:0 auto 26px}
-  .video{position:relative;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,#2A3A2A,#3E5A49);display:flex;align-items:center;justify-content:center;margin:0 auto 30px;max-width:820px;text-align:center;padding:20px;color:var(--cream)}
+  /* video-quiz player */
+  .player{position:relative;aspect-ratio:16/9;max-width:820px;margin:0 auto 30px;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,#2A3A2A,#3E5A49);color:var(--cream)}
+  .player.tall{aspect-ratio:auto}
+  .player video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;cursor:pointer}
+  .player .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:20px 20px 30%;text-align:center;color:var(--dim);font-size:15px}
+  .player .ph b{color:var(--cream);font-weight:500}
+  .unmute{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);z-index:6;display:none;align-items:center;gap:10px;border:0;border-radius:14px;background:var(--yellow);color:#1B2318;font:600 18px/1.25 "Outfit",sans-serif;padding:16px 22px;cursor:pointer;box-shadow:0 10px 40px rgba(0,0,0,.35);animation:pulse 1.6s infinite}
+  .unmute.on{display:flex}
+  .unmute span{text-align:left}
+  .unmute small{display:block;font-weight:400;font-size:14px}
+  @keyframes pulse{50%{transform:translate(-50%,-50%) scale(1.04)}}
+  .skipclip{position:absolute;right:12px;top:12px;z-index:6;display:none;border:0;border-radius:999px;background:rgba(15,20,13,.6);color:var(--cream);font:500 14px "Outfit",sans-serif;padding:8px 14px;cursor:pointer}
+  .skipclip.on{display:block}
+  .vbar{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(243,238,227,.15);z-index:3}
+  .vbar div{height:100%;width:0;background:var(--yellow);transition:width .25s linear}
+  .quiz{position:absolute;inset:0;z-index:5;display:none;flex-direction:column;overflow:auto;padding:22px 26px 18px;text-align:left;background:linear-gradient(to bottom,rgba(15,20,13,0) 0%,rgba(15,20,13,.55) 30%,rgba(15,20,13,.93) 100%);animation:pop .2s}
+  .quiz.on{display:flex}
+  .quiz .qin{margin-top:auto}
+  .player.tall .quiz{position:relative;min-height:var(--h)}
+  .player.tall .quiz,.player.solid .quiz{background:rgba(15,20,13,.9)}
+  .player.tall .qin{margin:auto 0}
+  .player.tall .vbar{display:none}
+  .quiz .progress{background:rgba(243,238,227,.18);margin-bottom:16px}
+  .quiz h2{text-align:center;font-size:clamp(20px,2.6vw,26px);color:var(--cream)}
+  .quiz .muted{color:var(--dim);text-align:center}
+  .quiz .opts{margin:12px auto}
+  .quiz label.f,.quiz .check,.quiz .back{color:var(--dim)}
+  .quiz .next{background:var(--cream);color:#1B2318}
+  .quiz .err{color:#F2A08F}
+  .quiz .nav{margin-top:12px}
   .play{width:72px;height:72px;border-radius:50%;background:rgba(243,238,227,.18);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
   .proof{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin-top:20px;font-size:15px;color:var(--dim)}
   .proof b{color:var(--cream)}
@@ -78,18 +107,10 @@
 
   .final{text-align:center;padding:70px 0 90px}
 
-  /* modal */
-  .modal{position:fixed;inset:0;background:rgba(10,14,9,.78);display:none;align-items:flex-start;justify-content:center;z-index:50;overflow:auto;padding:4vh 14px}
-  .modal.open{display:flex}
-  .mbox{position:relative;background:#fff;color:var(--ink);border-radius:20px;width:min(100%,760px);padding:34px 34px 26px;animation:pop .2s}
-  @keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-  .close{position:absolute;top:-14px;right:-14px;width:36px;height:36px;border-radius:50%;border:0;background:#1B2318;color:#fff;font-size:20px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3)}
   .progress{height:5px;background:var(--lline);border-radius:5px;overflow:hidden;margin-bottom:26px}
   .progress div{height:100%;background:var(--yellow);width:0;transition:width .3s}
   .step{display:none}
   .step.active{display:block;animation:pop .2s}
-  .mbox h2{text-align:center;font-size:clamp(22px,3vw,28px)}
-  .mbox .muted{color:var(--muted);text-align:center}
   .opts{display:grid;gap:10px;margin:18px auto;max-width:560px}
   .opt{display:block;text-align:center;width:100%;background:var(--yellow);border:2px solid var(--yellow);border-radius:12px;padding:16px 18px;font:500 17px "Outfit",sans-serif;cursor:pointer;color:#1B2318}
   .opt:hover{background:var(--yellow-2)}
@@ -112,10 +133,10 @@
   .nav.center-back{justify-content:center}
   /* result inside popup */
   .res{text-align:center}
-  .res .lead{color:var(--muted);margin:0 0 6px}
-  .res .big{font-size:clamp(40px,7vw,60px);font-weight:700;color:var(--green);line-height:1.05;margin:4px 0 6px}
-  .res .per{font-size:18px;color:var(--ink);margin:0 0 4px}
-  .res .range{color:var(--muted);font-size:15px;margin:0 0 20px}
+  .res .lead{color:var(--dim);margin:0 0 6px}
+  .res .big{font-size:clamp(40px,7vw,60px);font-weight:700;color:var(--yellow);line-height:1.05;margin:4px 0 6px}
+  .res .per{font-size:18px;color:var(--cream);margin:0 0 4px}
+  .res .range{color:var(--dim);font-size:15px;margin:0 0 20px}
   .res .cmp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:560px;margin:0 auto 24px}
   .res .cmp div{background:#FAF7F1;border-radius:10px;padding:10px 6px;font-size:13px;color:var(--muted)}
   .res .cmp b{display:block;font-size:17px;color:var(--ink)}
@@ -123,13 +144,13 @@
   .res .cmp .hl b{color:var(--green)}
   .go{display:block;width:100%;max-width:560px;margin:0 auto;border:0;border-radius:12px;background:var(--yellow);color:#1B2318;font:600 18px/1.3 "Outfit",sans-serif;padding:18px 20px;cursor:pointer;text-decoration:none;text-align:center}
   .go:hover{background:var(--yellow-2)}
-  .skip{display:block;margin:14px auto 0;background:none;border:0;color:var(--muted);font:14px "Outfit",sans-serif;cursor:pointer;text-decoration:underline}
-  .res .cta-t{font-size:clamp(22px,3.2vw,28px);color:var(--ink);margin:0 auto 16px;max-width:560px}
+  .skip{display:block;margin:14px auto 0;background:none;border:0;color:var(--dim);font:14px "Outfit",sans-serif;cursor:pointer;text-decoration:underline}
+  .res .cta-t{font-size:clamp(22px,3.2vw,28px);color:var(--cream);margin:0 auto 16px;max-width:560px}
   .go{font-size:20px;padding:20px}
   .slider{text-align:center;margin-top:18px}
-  .sval{font-size:clamp(34px,6vw,46px);font-weight:700;color:var(--green);margin-bottom:14px}
+  .sval{font-size:clamp(34px,6vw,46px);font-weight:700;color:var(--yellow);margin-bottom:14px}
   .slider input[type=range]{width:100%;accent-color:#FF6B1A;height:28px;cursor:pointer}
-  .sends{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-top:4px}
+  .sends{display:flex;justify-content:space-between;font-size:14px;color:var(--dim);margin-top:4px}
   @media (max-width:560px){ .res .cmp{grid-template-columns:1fr} }
 
   /* results */
@@ -171,11 +192,13 @@
     .reviews{grid-template-columns:1fr}
     .vids{grid-template-columns:1fr 1fr;gap:10px}
     .row{grid-template-columns:1fr}
+    .player{aspect-ratio:4/5}
+    .quiz{padding:18px 14px 14px}
+    .quiz .opt{padding:13px 14px;font-size:16px}
+    .unmute{font-size:16px;padding:14px 18px;width:max-content;max-width:88%}
     .scen{grid-template-columns:1fr}
     .bar{grid-template-columns:1fr 90px}
     .bar .t{grid-column:1/-1;order:3}
-    .mbox{padding:28px 18px 20px}
-    .close{top:8px;right:8px}
     .btn-y{padding:24px 28px}
     .card{padding:18px}
     table{font-size:13px}
@@ -190,13 +213,133 @@
     <div class="hero">
       <h1 id="headline" class="narrow">Hoe interessant is het om een investering te doen op Bali? Zie wat je overhoudt:</h1>
       <p class="sub" id="subline">Ontvang een persoonlijk document dat inzicht geeft in de opbrengsten van jouw vermogen wanneer je het zou investeren in vastgoed op Bali of Lombok. Door 7 vragen specifiek ingericht op jouw situatie, kunnen we een persoonlijke berekening maken.</p>
-      <div class="video" id="video">
-        <div><div class="play"><svg width="28" height="28" viewBox="0 0 24 24" fill="#F3EEE3"><path d="M8 5v14l11-7z"/></svg></div>
-        Video van Julius (2 tot 3 minuten)</div>
+      <!-- VIDEO-QUIZ: clips via Cloudflare Stream, vragen verschijnen in de video -->
+      <div class="player" id="player">
+        <video id="pv" playsinline preload="metadata"></video>
+        <div class="ph" id="ph"><div class="play"><svg width="28" height="28" viewBox="0 0 24 24" fill="#F3EEE3"><path d="M8 5v14l11-7z"/></svg></div><b>Video van Julius</b><span id="phLabel"></span></div>
+        <button class="unmute" id="unmute" type="button"></button>
+        <button class="skipclip" id="skipClip" type="button"></button>
+        <div class="vbar"><div id="vbar"></div></div>
+        <div class="quiz" id="quiz"><div class="qin">
+          <div class="progress"><div id="bar"></div></div>
+
+          <div class="step auto" data-step="pain">
+            <h2>Levert je vermogen nu minder op dan je zou willen?</h2>
+            <div class="opts" data-key="pain">
+              <button class="opt" data-v="yes">Ja</button>
+              <button class="opt" data-v="no">Nee</button>
+            </div>
+          </div>
+
+          <div class="step auto" data-step="goal">
+            <h2>Wat wil je vooral bereiken met je vermogen?</h2>
+            <div class="opts" data-key="goal">
+              <button class="opt" data-v="income">Elke maand passief inkomen</button>
+              <button class="opt" data-v="growth">Mijn vermogen laten groeien</button>
+              <button class="opt" data-v="spread">Spreiden buiten Nederland</button>
+              <button class="opt" data-v="later">Een eigen plek op Bali voor later</button>
+            </div>
+          </div>
+
+          <div class="step" data-step="budget">
+            <h2>Welk bedrag wil je investeren?</h2>
+            <p class="muted">Inclusief een eventuele lening. Een schatting is prima.</p>
+            <div class="slider fields">
+              <div class="sval" id="budgetVal">€ 300.000</div>
+              <input type="range" id="budgetExact" min="0" max="1000" step="1" value="341" aria-label="Investeringsbedrag">
+              <div class="sends"><span>€ 100.000</span><span>€ 2.500.000</span></div>
+            </div>
+            <div class="err" id="err-budget">Kies een bedrag.</div>
+          </div>
+
+          <div class="step auto" data-step="source">
+            <h2>Vanuit welk vermogen wil je investeren?</h2>
+            <div class="opts" data-key="source">
+              <button class="opt" data-v="private">Privévermogen<small>Spaargeld of beleggingen in box 3</small></button>
+              <button class="opt" data-v="company">Vanuit mijn bedrijf<small>Bijvoorbeeld een BV of holding</small></button>
+              <button class="opt" data-v="unsure">Weet ik nog niet<small>Wij rekenen met privévermogen en bespreken de opties</small></button>
+            </div>
+          </div>
+
+          <div class="step" data-step="loan">
+            <h2>Financier je een deel met een lening?</h2>
+            <div class="opts" data-key="loan">
+              <button class="opt" data-v="no">Nee, volledig eigen geld</button>
+              <button class="opt" data-v="yes">Ja, een deel komt uit een lening</button>
+            </div>
+            <div id="loanFields" class="fields" style="display:none">
+              <div class="row">
+                <div><label class="f" for="loanAmount">Bedrag van de lening (€)</label><input type="number" id="loanAmount" min="0" step="5000" placeholder="Bijvoorbeeld 100000"></div>
+                <div><label class="f" for="loanRate">Verwachte rente per jaar (%)</label><input type="number" id="loanRate" min="0" max="20" step="0.1" value="5"></div>
+              </div>
+              <p class="small muted mt">We rekenen met aflossingsvrij: alleen de rente gaat van je opbrengst af.</p>
+            </div>
+            <div class="err" id="err-loan">Vul het leenbedrag in (lager dan je budget).</div>
+          </div>
+
+          <div class="step auto" data-step="live">
+            <h2>Wat zijn je plannen?</h2>
+            <div class="opts" data-key="live">
+              <button class="opt" data-v="nl">Ik blijf in Nederland wonen</button>
+              <button class="opt" data-v="bali">Ik wil (op termijn) op Bali of Lombok wonen</button>
+              <button class="opt" data-v="unsure">Weet ik nog niet</button>
+            </div>
+          </div>
+
+          <div class="step auto" data-step="use">
+            <h2>Wil je zelf in de villa verblijven?</h2>
+            <div class="opts" data-key="ownWeeks">
+              <button class="opt" data-v="0">Nee, puur als investering</button>
+              <button class="opt" data-v="2">Ja, 1 tot 2 weken per jaar</button>
+              <button class="opt" data-v="4">Ja, 3 tot 4 weken per jaar</button>
+              <button class="opt" data-v="8">Ja, langer dan een maand</button>
+            </div>
+          </div>
+
+          <div class="step" data-step="name">
+            <h2>Wat is je voornaam?</h2>
+            <p class="muted">Dan maken we je berekening persoonlijk.</p>
+            <div class="fields"><input type="text" id="first" autocomplete="given-name" placeholder="Voornaam"></div>
+            <div class="err" id="err-name">Vul je voornaam in.</div>
+          </div>
+
+          <div class="step" data-step="contact">
+            <h2>Waar mogen we je berekening naartoe sturen?</h2>
+            <p class="muted">Op de volgende pagina zie je direct je verwachte inkomen. We mailen je ook een kopie van je berekening.</p>
+            <div class="fields">
+              <label class="f" for="email">E-mailadres</label>
+              <input type="email" id="email" autocomplete="email" placeholder="naam@voorbeeld.nl">
+              <label class="f" for="phone">Telefoonnummer</label>
+              <div class="tel">
+                <select id="cc" aria-label="Landcode">
+                  <option value="+31">🇳🇱 +31</option>
+                  <option value="+32">🇧🇪 +32</option>
+                  <option value="+49">🇩🇪 +49</option>
+                  <option value="+62">🇮🇩 +62</option>
+                  <option value="+44">🇬🇧 +44</option>
+                  <option value="+41">🇨🇭 +41</option>
+                  <option value="+">Ander land</option>
+                </select>
+                <input type="tel" id="phone" autocomplete="tel-national" placeholder="6 12345678">
+              </div>
+              <label class="check"><input type="checkbox" id="consent"> Ik ga akkoord dat The Bali Houses contact met mij opneemt over deze berekening.</label>
+            </div>
+            <div class="err" id="err-contact">Vul een geldig e-mailadres en telefoonnummer in en geef akkoord.</div>
+          </div>
+
+          <div class="step" data-step="result">
+            <div id="resultBox"></div>
+          </div>
+
+          <div class="nav">
+            <button class="back" id="backBtn" onclick="prev()">&larr; Terug</button>
+            <button class="next" id="nextBtn" onclick="next()">Volgende</button>
+          </div>
+        </div></div>
       </div>
-      <button class="btn-y" onclick="openQuiz()">
+      <button class="btn-y" onclick="startQuiz()">
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1B2318" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/></svg>
-        <span id="quizLabel">Vul de Quiz in</span>
+        <span id="quizLabel">Start direct met de quiz</span>
       </button>
       <div class="resume" id="resumeNote" style="display:none">Je was al begonnen. Je gaat verder waar je gebleven was.</div>
       <div class="proof"><span><b>5,0</b> op Google</span><span><b>91</b> Nederlandse kopers begeleid</span><span>Klaar in ongeveer 2 minuten</span></div>
@@ -220,133 +363,12 @@
 
     <section class="final">
       <h2 class="narrow">Klaar om vermogen daadwerkelijk te laten renderen? Boek hieronder een gratis meeting</h2>
-      <div class="mt"><button class="btn-y" id="planBtn" onclick="openQuiz()">Plan een meeting</button></div>
+      <div class="mt"><button class="btn-y" id="planBtn" onclick="startQuiz()">Plan een meeting</button></div>
     </section>
   </div>
 </main>
 
 <main id="results"><div class="wrap narrow" id="resultsInner"></div></main>
-
-<!-- QUIZ POPUP -->
-<div class="modal" id="modal" onclick="if(event.target===this) closeQuiz()">
-  <div class="mbox">
-    <button class="close" onclick="closeQuiz()" aria-label="Sluiten">&times;</button>
-    <div class="progress"><div id="bar"></div></div>
-
-    <div class="step auto" data-step="pain">
-      <h2>Levert je vermogen nu minder op dan je zou willen?</h2>
-      <div class="opts" data-key="pain">
-        <button class="opt" data-v="yes">Ja</button>
-        <button class="opt" data-v="no">Nee</button>
-      </div>
-    </div>
-
-    <div class="step auto" data-step="goal">
-      <h2>Wat wil je vooral bereiken met je vermogen?</h2>
-      <div class="opts" data-key="goal">
-        <button class="opt" data-v="income">Elke maand passief inkomen</button>
-        <button class="opt" data-v="growth">Mijn vermogen laten groeien</button>
-        <button class="opt" data-v="spread">Spreiden buiten Nederland</button>
-        <button class="opt" data-v="later">Een eigen plek op Bali voor later</button>
-      </div>
-    </div>
-
-    <div class="step" data-step="budget">
-      <h2>Welk bedrag wil je investeren?</h2>
-      <p class="muted">Inclusief een eventuele lening. Een schatting is prima.</p>
-      <div class="slider fields">
-        <div class="sval" id="budgetVal">€ 300.000</div>
-        <input type="range" id="budgetExact" min="0" max="1000" step="1" value="341" aria-label="Investeringsbedrag">
-        <div class="sends"><span>€ 100.000</span><span>€ 2.500.000</span></div>
-      </div>
-      <div class="err" id="err-budget">Kies een bedrag.</div>
-    </div>
-
-    <div class="step auto" data-step="source">
-      <h2>Vanuit welk vermogen wil je investeren?</h2>
-      <div class="opts" data-key="source">
-        <button class="opt" data-v="private">Privévermogen<small>Spaargeld of beleggingen in box 3</small></button>
-        <button class="opt" data-v="company">Vanuit mijn bedrijf<small>Bijvoorbeeld een BV of holding</small></button>
-        <button class="opt" data-v="unsure">Weet ik nog niet<small>Wij rekenen met privévermogen en bespreken de opties</small></button>
-      </div>
-    </div>
-
-    <div class="step" data-step="loan">
-      <h2>Financier je een deel met een lening?</h2>
-      <div class="opts" data-key="loan">
-        <button class="opt" data-v="no">Nee, volledig eigen geld</button>
-        <button class="opt" data-v="yes">Ja, een deel komt uit een lening</button>
-      </div>
-      <div id="loanFields" class="fields" style="display:none">
-        <div class="row">
-          <div><label class="f" for="loanAmount">Bedrag van de lening (€)</label><input type="number" id="loanAmount" min="0" step="5000" placeholder="Bijvoorbeeld 100000"></div>
-          <div><label class="f" for="loanRate">Verwachte rente per jaar (%)</label><input type="number" id="loanRate" min="0" max="20" step="0.1" value="5"></div>
-        </div>
-        <p class="small muted mt">We rekenen met aflossingsvrij: alleen de rente gaat van je opbrengst af.</p>
-      </div>
-      <div class="err" id="err-loan">Vul het leenbedrag in (lager dan je budget).</div>
-    </div>
-
-    <div class="step auto" data-step="live">
-      <h2>Wat zijn je plannen?</h2>
-      <div class="opts" data-key="live">
-        <button class="opt" data-v="nl">Ik blijf in Nederland wonen</button>
-        <button class="opt" data-v="bali">Ik wil (op termijn) op Bali of Lombok wonen</button>
-        <button class="opt" data-v="unsure">Weet ik nog niet</button>
-      </div>
-    </div>
-
-    <div class="step auto" data-step="use">
-      <h2>Wil je zelf in de villa verblijven?</h2>
-      <div class="opts" data-key="ownWeeks">
-        <button class="opt" data-v="0">Nee, puur als investering</button>
-        <button class="opt" data-v="2">Ja, 1 tot 2 weken per jaar</button>
-        <button class="opt" data-v="4">Ja, 3 tot 4 weken per jaar</button>
-        <button class="opt" data-v="8">Ja, langer dan een maand</button>
-      </div>
-    </div>
-
-    <div class="step" data-step="name">
-      <h2>Wat is je voornaam?</h2>
-      <p class="muted">Dan maken we je berekening persoonlijk.</p>
-      <div class="fields"><input type="text" id="first" autocomplete="given-name" placeholder="Voornaam"></div>
-      <div class="err" id="err-name">Vul je voornaam in.</div>
-    </div>
-
-    <div class="step" data-step="contact">
-      <h2>Waar mogen we je berekening naartoe sturen?</h2>
-      <p class="muted">Op de volgende pagina zie je direct je verwachte inkomen. We mailen je ook een kopie van je berekening.</p>
-      <div class="fields">
-        <label class="f" for="email">E-mailadres</label>
-        <input type="email" id="email" autocomplete="email" placeholder="naam@voorbeeld.nl">
-        <label class="f" for="phone">Telefoonnummer</label>
-        <div class="tel">
-          <select id="cc" aria-label="Landcode">
-            <option value="+31">🇳🇱 +31</option>
-            <option value="+32">🇧🇪 +32</option>
-            <option value="+49">🇩🇪 +49</option>
-            <option value="+62">🇮🇩 +62</option>
-            <option value="+44">🇬🇧 +44</option>
-            <option value="+41">🇨🇭 +41</option>
-            <option value="+">Ander land</option>
-          </select>
-          <input type="tel" id="phone" autocomplete="tel-national" placeholder="6 12345678">
-        </div>
-        <label class="check"><input type="checkbox" id="consent"> Ik ga akkoord dat The Bali Houses contact met mij opneemt over deze berekening.</label>
-      </div>
-      <div class="err" id="err-contact">Vul een geldig e-mailadres en telefoonnummer in en geef akkoord.</div>
-    </div>
-
-    <div class="step" data-step="result">
-      <div id="resultBox"></div>
-    </div>
-
-    <div class="nav">
-      <button class="back" id="backBtn" onclick="prev()">&larr; Terug</button>
-      <button class="next" id="nextBtn" onclick="next()">Volgende</button>
-    </div>
-  </div>
-</div>
 
 <script>
 /* =========================================================================
@@ -361,10 +383,34 @@ const CONFIG = {
     agent:  "https://thebalihouses.com/contact",   // overige gekwalificeerde leads
   },
   ebookUrl: "https://thebalihouses.com",
-  autoOpenQuiz: true,          // quiz opent als popup na het laden
-  autoOpenDelay: 5000,         // na 5 seconden
-  resumeDelay: 1500,           // terugkerende bezoeker die al begonnen was: popup sneller terug
   thankYouUrl: "bedankt.html", // pagina na het inplannen van het gesprek (FAQ-video's)
+  // Kijkgedrag: 1 samenvatting per bezoeker (sessionId, verste vraag, seconden per clip),
+  // als formulierdata naar een aparte Make-webhook. Leeg = alleen in de console.
+  analyticsUrl: "",
+
+  /* VIDEO-QUIZ (Cloudflare Stream)
+     - customerCode: uit de Stream-URL "customer-XXXX.cloudflarestream.com" -> "XXXX"
+     - uid: het Video ID van een clip in Cloudflare Stream (of een volledige .m3u8/.mp4-URL).
+       Leeg = placeholder; de vraag verschijnt dan direct.
+     - showAt: na hoeveel seconden de antwoordknoppen verschijnen. null = als de clip klaar is.
+     - replies: optionele reactieclip per antwoord (sleutel = data-v van de knop), speelt af
+       voordat de volgende vraag komt. */
+  video: {
+    customerCode: "",
+    intro:  { uid:"", label:"Intro: wie is Julius en wat levert de quiz op", skip:"Start de quiz" },
+    steps: {
+      pain:   { uid:"", showAt:null, label:"Vraag: levert je vermogen genoeg op?", replies:{ yes:"", no:"" } },
+      goal:   { uid:"", showAt:null, label:"Vraag: wat wil je bereiken?", replies:{ income:"", growth:"", spread:"", later:"" } },
+      budget: { uid:"", showAt:null, label:"Vraag: welk bedrag wil je investeren?" },
+      source: { uid:"", showAt:null, label:"Vraag: privé of vanuit je bedrijf?", replies:{ private:"", company:"", unsure:"" } },
+      loan:   { uid:"", showAt:null, label:"Vraag: financier je met een lening?" },
+      live:   { uid:"", showAt:null, label:"Vraag: wat zijn je plannen?" },
+      use:    { uid:"", showAt:null, label:"Vraag: wil je zelf in de villa verblijven?" },
+      name:    { uid:"", showAt:0,    label:"Bijna klaar: je voornaam" },
+      contact: { uid:"", showAt:0,    label:"Waar sturen we je berekening heen?" }
+    },
+    result: { uid:"", showAt:null, label:"Julius over je uitkomst", skip:"Toon mijn uitkomst" }
+  },
   routing: { minBudget: 50000, juliusFrom: 1000000 },
 
   // Google reviews: vervang door 6 echte reviews (naam, tekst). Lege tekst = placeholder.
@@ -435,6 +481,9 @@ const steps = [...document.querySelectorAll('.step')];
 const QUESTIONS = steps.findIndex(s=>s.dataset.step==='result'); // aantal vraagstappen voor de voortgangsbalk
 let lastInput = null, lastRoute = null;
 let cur = 0;
+// video-quiz state
+const V = document.getElementById('pv');
+let soundOn = false, clip = null, clipSeq = 0, hls = null, hlsLib = null, started = false, startup = null;
 const eur = n => new Intl.NumberFormat('nl-NL',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(Math.round(n));
 const pct = n => (n*100).toLocaleString('nl-NL',{maximumFractionDigits:1})+'%';
 const $ = id => document.getElementById(id);
@@ -487,7 +536,7 @@ function restore(d){
   if(d && d.done && d.done.input){ restore(d); renderResults(d.done.input, d.done.route); return; }
   let resuming = false;
   if(d){ restore(d); if(cur>0 || d.f && d.f.first){ resuming = true; markResume(); } }
-  if(CONFIG.autoOpenQuiz) setTimeout(()=>{ if(!$('modal').classList.contains('open') && $('results').style.display!=='block') openQuiz(); }, resuming ? CONFIG.resumeDelay : CONFIG.autoOpenDelay);
+  startup = resuming ? 'resume' : 'intro';   // start pas onderaan het script, als de player-code geladen is
 })();
 
 /* --- quiz interactie --- */
@@ -497,7 +546,8 @@ document.querySelectorAll('.opts').forEach(g=>{
     g.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
     b.classList.add('sel');
     A[g.dataset.key] = b.dataset.v;
-    if(g.dataset.key==='loan'){ $('loanFields').style.display = b.dataset.v==='yes'?'block':'none'; save(); if(b.dataset.v==='no') setTimeout(next,180); return; }
+    soundOn = true;   // kijker heeft in de video geklikt: volgende clips met geluid
+    if(g.dataset.key==='loan'){ $('loanFields').style.display = b.dataset.v==='yes'?'block':'none'; fit(); save(); if(b.dataset.v==='no') setTimeout(next,180); return; }
     save(); setTimeout(next,180);
   });
 });
@@ -505,19 +555,186 @@ $('budgetExact').addEventListener('input',()=>{ $('budgetVal').textContent = eur
 FIELDS.forEach(id=>$(id).addEventListener('input',()=>save()));
 $('consent').addEventListener('change',()=>save());
 
-function openQuiz(){ $('modal').classList.add('open'); document.body.style.overflow='hidden'; show(cur); }
-function closeQuiz(){
-  $('modal').classList.remove('open'); document.body.style.overflow='';
-  if(cur>=QUESTIONS){ if(lastInput) renderResults(lastInput, lastRoute); return; }
-  save(); if(cur>0 || $('first').value) markResume();
+/* ============================ video-quiz player ============================ */
+const VQ = CONFIG.video;
+const ICON_MUTE = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1B2318" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m23 9-6 6M17 9l6 6"/></svg>';
+const ICON_PLAY = '<svg width="24" height="24" viewBox="0 0 24 24" fill="#1B2318"><path d="M8 5v14l11-7z"/></svg>';
+
+function clipUrl(uid){
+  if(!uid) return '';
+  if(/^https?:\/\//.test(uid)) return uid;
+  return VQ.customerCode ? `https://customer-${VQ.customerCode}.cloudflarestream.com/${uid}/manifest/video.m3u8` : '';
 }
-document.addEventListener('keydown',e=>{
-  if(!$('modal').classList.contains('open')) return;
-  if(e.key==='Escape') closeQuiz();
-  if(e.key==='Enter' && cur<QUESTIONS){ e.preventDefault(); next(); }
+function posterUrl(uid){
+  return uid && VQ.customerCode && !/^https?:\/\//.test(uid) ? `https://customer-${VQ.customerCode}.cloudflarestream.com/${uid}/thumbnails/thumbnail.jpg` : '';
+}
+function loadHls(){
+  return hlsLib || (hlsLib = new Promise((res,rej)=>{
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js';
+    s.onload = ()=>res(window.Hls); s.onerror = rej;
+    document.head.appendChild(s);
+  }));
+}
+// Safari speelt HLS zelf af; andere browsers via hls.js (alleen geladen als het nodig is).
+function setSrc(url){
+  if(hls){ hls.destroy(); hls=null; }
+  const isHls = /\.m3u8(\?|$)/.test(url);
+  if(!isHls || V.canPlayType('application/vnd.apple.mpegurl')){ V.src = url; return Promise.resolve(); }
+  return loadHls().then(Hls=>{
+    if(!Hls.isSupported()){ V.src = url; return; }
+    hls = new Hls({ capLevelToPlayerSize:true });
+    hls.on(Hls.Events.ERROR, (e,d)=>{ if(d.fatal) clipFailed(); });
+    hls.loadSource(url); hls.attachMedia(V);
+  });
+}
+
+/* Speelt een clip af.
+   ask:true  = vraagclip: de antwoordknoppen verschijnen op showAt (of als de clip klaar is).
+   ask:false = intro of reactieclip: na afloop volgt onEnd(). */
+function playClip(o){
+  const my = ++clipSeq;
+  clip = { ...o, my, shown:false, ended:false, url:clipUrl(o.uid) };
+  V.pause(); $('vbar').style.width = '0';
+  hideQuiz();
+  if(!clip.url){ noVideo(o.label); clip.ended = true; controls(); if(o.ask) reveal(); else if(o.onEnd) o.onEnd(); return; }
+  $('ph').style.display = 'none'; V.style.display = 'block';
+  const p = posterUrl(o.uid); if(p) V.poster = p; else V.removeAttribute('poster');
+  setSrc(clip.url).then(()=>{ if(my===clipSeq) tryPlay(my); }).catch(()=>{ if(my===clipSeq) clipFailed(); });
+  controls();
+}
+function noVideo(label){
+  if(hls){ hls.destroy(); hls=null; }
+  V.removeAttribute('src'); V.removeAttribute('poster'); V.load(); V.style.display = 'none';
+  $('ph').style.display = 'flex'; $('phLabel').textContent = label || '';
+}
+function tryPlay(my){
+  V.muted = !soundOn;
+  V.play().then(()=>controls()).catch(err=>{
+    if(my!==clipSeq || (err && err.name==='AbortError')) return;
+    if(!V.muted){ V.muted = true; V.play().then(()=>controls()).catch(()=>{ if(my===clipSeq) controls(true); }); }
+    else controls(true);   // autoplay geblokkeerd: toon afspeelknop
+  });
+}
+function clipFailed(){
+  const c = clip; if(!c || c.failed) return;
+  c.failed = c.ended = true;
+  noVideo(c.label);
+  if(c.ask){ if(!c.shown) reveal(); } else if(c.onEnd) c.onEnd();
+  controls();
+}
+
+// Geluid-aan knop (zoals Vidalytics), afspeelknop en "overslaan".
+function controls(blocked){
+  const u = $('unmute'), s = $('skipClip');
+  if(blocked && clip) clip.blocked = true;
+  const live = !!(clip && clip.url && !clip.ended);
+  let mode = '';
+  if(live && !clip.shown){
+    if(clip.blocked && V.paused) mode = 'play';
+    else if(V.muted) mode = 'unmute';
+    else if(V.paused && V.currentTime>0) mode = 'resume';
+  }
+  u.dataset.mode = mode;
+  u.innerHTML = mode==='unmute' ? ICON_MUTE+'<span>Je video speelt al<small>Klik om het geluid aan te zetten</small></span>'
+              : mode==='play'   ? ICON_PLAY+'<span>Klik om af te spelen</span>'
+              : mode==='resume' ? ICON_PLAY+'<span>Verder kijken</span>' : '';
+  u.classList.toggle('on', !!mode);
+  s.textContent = (clip && clip.skip) || (clip && clip.ask ? 'Direct antwoorden →' : 'Overslaan →');
+  s.classList.toggle('on', live && !(clip.ask && clip.shown));
+}
+$('unmute').addEventListener('click',()=>{
+  if(!clip) return;
+  const mode = $('unmute').dataset.mode;
+  soundOn = true; S.unmuted = true; V.muted = false;
+  if(mode==='unmute' && !clip.restarted){ clip.restarted = true; V.currentTime = 0; }   // opnieuw vanaf het begin, nu met geluid
+  V.play().catch(()=>{ V.muted = true; V.play().catch(()=>{}); });
+  controls();
 });
-function show(i){
-  cur=i; steps.forEach((s,k)=>s.classList.toggle('active',k===i));
+$('skipClip').addEventListener('click',()=>{
+  if(!clip) return;
+  soundOn = true;
+  if(clip.ask) reveal();                       // video loopt door onder de vraag
+  else { clip.ended = true; V.pause(); if(clip.onEnd) clip.onEnd(); }
+  controls();
+});
+V.addEventListener('click',()=>{
+  if(!clip || !clip.url || clip.ended) return;
+  if(V.muted || V.paused) $('unmute').click(); else V.pause();
+});
+V.addEventListener('timeupdate',()=>{
+  if(!clip || !clip.url || !V.duration) return;
+  const t = V.currentTime / V.duration;
+  $('vbar').style.width = (1-Math.pow(1-t,2))*100 + '%';   // loopt snel aan het begin, voelt korter
+  stat(V.currentTime, V.duration);
+  if(clip.ask && !clip.shown && clip.showAt!=null && V.currentTime>=clip.showAt) reveal();
+});
+V.addEventListener('ended',()=>{
+  if(!clip || !clip.url) return;
+  clip.ended = true; $('vbar').style.width = '100%';
+  if(clip.ask){ if(!clip.shown) reveal(); }
+  else if(clip.onEnd) clip.onEnd();
+  controls();
+});
+['play','pause','volumechange'].forEach(ev=>V.addEventListener(ev,()=>controls()));
+V.addEventListener('error',()=>{ if(clip && clip.url && V.getAttribute('src')) clipFailed(); });
+
+function reveal(){
+  if(!clip) return;
+  clip.shown = true;
+  $('player').classList.toggle('solid', !steps[cur].classList.contains('auto'));   // formulieren en uitkomst: donkere achtergrond
+  $('quiz').classList.add('on'); fit(); controls();
+  if(started && $('player').getBoundingClientRect().top<0) $('player').scrollIntoView({behavior:'smooth',block:'start'});
+  const inp = steps[cur].querySelector('input');
+  if(inp && started && window.innerWidth>640) setTimeout(()=>inp.focus({preventScroll:true}),50);
+}
+function hideQuiz(){ $('quiz').classList.remove('on'); fit(); }
+// Past de vraag niet over de video (formulieren, uitkomst, mobiel)? Dan groeit de player mee.
+function fit(){
+  const P = $('player'), Q = $('quiz');
+  P.classList.remove('tall'); P.style.removeProperty('--h');
+  if(!Q.classList.contains('on')) return;
+  const h = P.clientHeight;
+  if(Q.scrollHeight > h+2){ P.style.setProperty('--h', h+'px'); P.classList.add('tall'); }
+}
+window.addEventListener('resize', fit);
+
+function startQuiz(){
+  soundOn = true;
+  $('player').scrollIntoView({behavior:'smooth', block:'center'});
+  if(cur>=QUESTIONS && lastInput){ if(lastRoute!=='ebook') openBooking(); return; }
+  if(!started) return show(cur);
+  if(clip && clip.ask && !clip.shown) reveal();
+}
+
+/* --- kijkgedrag: 1 samenvatting per bezoeker, bijgewerkt bij verlaten van de pagina --- */
+const S = { sessionId:(crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2)),
+            startedAt:new Date().toISOString(), furthest:-1, unmuted:false, lead:false, clips:{}, lastClip:'', lastSecond:0 };
+function stat(t, d){
+  const k = clip.uid, c = S.clips[k] || (S.clips[k] = { label:clip.label||'', watched:0, duration:Math.round(d) });
+  c.watched = Math.max(c.watched, Math.round(t));
+  S.lastClip = k; S.lastSecond = Math.round(t);
+}
+function flush(){
+  const body = {
+    sessionId:S.sessionId, startedAt:S.startedAt, angle:params.get('angle')||'default',
+    utm_source:params.get('utm_source')||'', utm_campaign:params.get('utm_campaign')||'',
+    furthestStep: S.furthest<0 ? 'intro' : steps[S.furthest].dataset.step, furthestIndex:S.furthest, questions:QUESTIONS,
+    unmuted:S.unmuted, leadSubmitted:S.lead, lastClip:S.lastClip, lastSecond:S.lastSecond, clips:JSON.stringify(S.clips)
+  };
+  if(!CONFIG.analyticsUrl){ console.log('Kijkgedrag (geen analyticsUrl):', body); return; }
+  try{ navigator.sendBeacon(CONFIG.analyticsUrl, new URLSearchParams(body)); }catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') flush(); });
+
+document.addEventListener('keydown',e=>{
+  const a = document.activeElement;
+  if(e.key==='Enter' && cur<QUESTIONS && $('quiz').classList.contains('on') && $('quiz').contains(a) && a.tagName!=='BUTTON'){ e.preventDefault(); next(); }
+});
+
+/* --- stappen --- */
+function show(i, instant){
+  cur=i; started=true; steps.forEach((s,k)=>s.classList.toggle('active',k===i));
   $('budgetVal').textContent = eur(budget());
   const done = i>=QUESTIONS, auto = steps[i].classList.contains('auto');
   $('bar').parentElement.style.display = done ? 'none' : '';
@@ -528,15 +745,18 @@ function show(i){
   $('nextBtn').style.display = auto ? 'none' : '';
   $('nextBtn').textContent = i===QUESTIONS-1 ? 'Bereken mijn inkomen' : 'Volgende';
   document.querySelectorAll('.err').forEach(e=>e.style.display='none');
-  const inp = steps[i].querySelector('input'); if(inp && window.innerWidth>640) setTimeout(()=>inp.focus(),50);
+  S.furthest = Math.max(S.furthest, i);
+  const name = steps[i].dataset.step, c = done ? VQ.result : (VQ.steps[name] || {});
+  if(instant){ clipSeq++; clip = { ask:true, shown:true, ended:true }; V.pause(); reveal(); }   // terug: vraag direct tonen
+  else playClip({ uid:c.uid, label:c.label, showAt:c.showAt, skip:c.skip, ask:true });
   if(!done) save();
 }
-function prev(){ if(cur>0) show(cur-1); }
+function prev(){ if(cur>0) show(cur-1, true); }
 /* slider: 0..1000 loopt logaritmisch van € 100.000 tot € 2.500.000, zodat de lagere bedragen meer ruimte krijgen */
 const BMIN=100000, BMAX=2500000;
 function budget(){ const p=+$('budgetExact').value/1000; const v=BMIN*Math.pow(BMAX/BMIN,p); const st=v<500000?5000:v<1000000?10000:25000; return Math.min(BMAX,Math.max(BMIN,Math.round(v/st)*st)); }
 function validate(){
-  const s = steps[cur].dataset.step, fail = id=>{$(id).style.display='block';return false;};
+  const s = steps[cur].dataset.step, fail = id=>{$(id).style.display='block';fit();return false;};
   if(s==='pain' || s==='goal') return !!A[s];
   if(s==='name') return !!$('first').value.trim() || fail('err-name');
   if(s==='contact') return (/^\S+@\S+\.\S+$/.test($('email').value.trim()) && $('phone').value.replace(/\D/g,'').length>=6 && $('consent').checked) || fail('err-contact');
@@ -547,7 +767,14 @@ function validate(){
   if(s==='use') return A.ownWeeks!==null;
   return true;
 }
-function next(){ if(cur>=QUESTIONS || !validate()) return; if(cur<QUESTIONS-1) show(cur+1); else finish(); }
+function next(){
+  if(cur>=QUESTIONS || (clip && !clip.ask && !clip.ended) || !validate()) return;
+  const go = ()=>{ if(cur<QUESTIONS-1) show(cur+1); else finish(); };
+  // optionele reactieclip van Julius op dit antwoord
+  const c = VQ.steps[steps[cur].dataset.step], g = steps[cur].querySelector('.opts');
+  const rep = c && c.replies && g ? c.replies[A[g.dataset.key]] : '';
+  if(clipUrl(rep)) playClip({ uid:rep, label:'', ask:false, onEnd:go }); else go();
+}
 
 /* ============================== calculation ============================== */
 function villaType(price){
@@ -609,6 +836,8 @@ function finish(){
   const route = input.budget < CONFIG.routing.minBudget ? 'ebook' : input.budget >= CONFIG.routing.juliusFrom ? 'julius' : 'agent';
   const r = route==='ebook'?null:calc(input);
   sendLead(input, route, r);
+  S.lead = true; flush();
+  if(route!=='ebook') $('quizLabel').textContent = 'Plan een gesprek';
   save({ done:{input, route} });
   lastInput = input; lastRoute = route;
   $('resultBox').innerHTML = route==='ebook' ? popupEbook(input) : popupResult(input, r);
@@ -630,7 +859,7 @@ function popupResult(i, r){
     </div>
     <h2 class="cta-t">Bekijk 3 beschikbare projecten die dit rendement kunnen behalen</h2>
     <button class="go" onclick="openBooking()">Plan een gesprek</button>
-    <button class="skip" onclick="closeQuiz()">Eerst mijn volledige berekening bekijken</button>
+    <button class="skip" onclick="showFullResults()">Eerst mijn volledige berekening bekijken</button>
   </div>`;
 }
 function popupEbook(i){
@@ -659,8 +888,10 @@ function bookingDone(){
   try{ const d = JSON.parse(localStorage.getItem(KEY)||'{}'); d.booked = new Date().toISOString(); localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){}
   location.href = CONFIG.thankYouUrl;
 }
+function showFullResults(){ if(lastInput) renderResults(lastInput, lastRoute); }
 function renderResults(input, route){
   lastInput = input; lastRoute = route;
+  clipSeq++; clip = null; V.pause();
   $('landing').style.display='none';
   $('resultsInner').innerHTML = route==='ebook' ? ebookView(input) : resultView(input, calc(input), route);
   $('results').style.display='block';
@@ -784,6 +1015,10 @@ function sendLead(input, route, r){
   if(!CONFIG.webhookUrl){ console.log('Lead (geen webhook ingesteld):', payload); return; }
   try{ fetch(CONFIG.webhookUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{}); }catch(e){}
 }
+
+/* --- start: intro (muted autoplay) of verder waar de bezoeker gebleven was --- */
+if(startup==='resume') show(cur);
+else if(startup==='intro') playClip({ ...VQ.intro, ask:false, onEnd:()=>show(0) });
 </script>
 </body>
 </html>
