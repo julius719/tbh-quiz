@@ -124,8 +124,13 @@
   .go{display:block;width:100%;max-width:560px;margin:0 auto;border:0;border-radius:12px;background:var(--yellow);color:#1B2318;font:600 18px/1.3 "Outfit",sans-serif;padding:18px 20px;cursor:pointer;text-decoration:none;text-align:center}
   .go:hover{background:var(--yellow-2)}
   .skip{display:block;margin:14px auto 0;background:none;border:0;color:var(--muted);font:14px "Outfit",sans-serif;cursor:pointer;text-decoration:underline}
-  .cal{width:100%;height:680px;border:0;border-radius:12px;margin-top:10px}
-  @media (max-width:560px){ .cal{height:620px} .res .cmp{grid-template-columns:1fr} }
+  .res .cta-t{font-size:clamp(22px,3.2vw,28px);color:var(--ink);margin:0 auto 16px;max-width:560px}
+  .go{font-size:20px;padding:20px}
+  .slider{text-align:center;margin-top:18px}
+  .sval{font-size:clamp(34px,6vw,46px);font-weight:700;color:var(--green);margin-bottom:14px}
+  .slider input[type=range]{width:100%;accent-color:#C9A86A;height:28px;cursor:pointer}
+  .sends{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-top:4px}
+  @media (max-width:560px){ .res .cmp{grid-template-columns:1fr} }
 
   /* results */
   #results{display:none}
@@ -236,15 +241,6 @@
       </div>
     </div>
 
-    <div class="step auto" data-step="box3">
-      <h2>Betaal je box 3 belasting over je spaargeld of beleggingen?</h2>
-      <div class="opts" data-key="box3">
-        <button class="opt" data-v="yes">Ja</button>
-        <button class="opt" data-v="no">Nee</button>
-        <button class="opt" data-v="unsure">Weet ik niet</button>
-      </div>
-    </div>
-
     <div class="step auto" data-step="goal">
       <h2>Wat wil je vooral bereiken met je vermogen?</h2>
       <div class="opts" data-key="goal">
@@ -258,16 +254,11 @@
     <div class="step" data-step="budget">
       <h2>Welk bedrag wil je investeren?</h2>
       <p class="muted">Inclusief een eventuele lening. Een schatting is prima.</p>
-      <div class="opts" data-key="budgetBand">
-        <button class="opt" data-v="40000">Minder dan € 50.000</button>
-        <button class="opt" data-v="100000">€ 50.000 tot € 150.000</button>
-        <button class="opt" data-v="225000">€ 150.000 tot € 300.000</button>
-        <button class="opt" data-v="400000">€ 300.000 tot € 500.000</button>
-        <button class="opt" data-v="750000">€ 500.000 tot € 1 miljoen</button>
-        <button class="opt" data-v="1500000">Meer dan € 1 miljoen</button>
+      <div class="slider fields">
+        <div class="sval" id="budgetVal">€ 300.000</div>
+        <input type="range" id="budgetExact" min="0" max="1000" step="1" value="341" aria-label="Investeringsbedrag">
+        <div class="sends"><span>€ 100.000</span><span>€ 2.500.000</span></div>
       </div>
-      <div class="fields"><label class="f" for="budgetExact">Of vul een exact bedrag in (optioneel)</label>
-      <input type="number" id="budgetExact" min="0" step="5000" placeholder="Bijvoorbeeld 350000"></div>
       <div class="err" id="err-budget">Kies een bedrag.</div>
     </div>
 
@@ -316,25 +307,19 @@
     </div>
 
     <div class="step" data-step="name">
-      <h2>Wat is je naam?</h2>
+      <h2>Wat is je voornaam?</h2>
       <p class="muted">Dan maken we je berekening persoonlijk.</p>
-      <div class="fields row">
-        <div><label class="f" for="first">Voornaam</label><input type="text" id="first" autocomplete="given-name"></div>
-        <div><label class="f" for="last">Achternaam</label><input type="text" id="last" autocomplete="family-name"></div>
-      </div>
-      <div class="err" id="err-name">Vul je voor- en achternaam in.</div>
+      <div class="fields"><input type="text" id="first" autocomplete="given-name" placeholder="Voornaam"></div>
+      <div class="err" id="err-name">Vul je voornaam in.</div>
     </div>
 
-    <div class="step" data-step="email">
-      <h2>Wat is je e-mailadres?</h2>
-      <p class="muted">Hier sturen we een kopie van je berekening naartoe.</p>
-      <div class="fields"><input type="email" id="email" autocomplete="email" placeholder="naam@voorbeeld.nl"></div>
-      <div class="err" id="err-email">Vul een geldig e-mailadres in.</div>
-    </div>
-
-    <div class="step" data-step="phone">
-      <h2>Op welk nummer kunnen we je bereiken?</h2>
+    <div class="step" data-step="contact">
+      <h2>Waar mogen we je berekening naartoe sturen?</h2>
+      <p class="muted">Op de volgende pagina zie je direct je verwachte inkomen. We mailen je ook een kopie van je berekening.</p>
       <div class="fields">
+        <label class="f" for="email">E-mailadres</label>
+        <input type="email" id="email" autocomplete="email" placeholder="naam@voorbeeld.nl">
+        <label class="f" for="phone">Telefoonnummer</label>
         <div class="tel">
           <select id="cc" aria-label="Landcode">
             <option value="+31">🇳🇱 +31</option>
@@ -349,17 +334,11 @@
         </div>
         <label class="check"><input type="checkbox" id="consent"> Ik ga akkoord dat The Bali Houses contact met mij opneemt over deze berekening.</label>
       </div>
-      <div class="err" id="err-phone">Vul je telefoonnummer in en geef akkoord.</div>
+      <div class="err" id="err-contact">Vul een geldig e-mailadres en telefoonnummer in en geef akkoord.</div>
     </div>
 
     <div class="step" data-step="result">
       <div id="resultBox"></div>
-    </div>
-
-    <div class="step" data-step="calendar">
-      <h2>Kies een moment voor je gesprek</h2>
-      <p class="muted">30 minuten via video. We laten je 3 projecten zien die passen bij jouw budget, met hun eigen berekening.</p>
-      <div id="calBox"></div>
     </div>
 
     <div class="nav">
@@ -380,11 +359,6 @@ const CONFIG = {
   booking: {
     julius: "https://thebalihouses.com/contact",   // budget boven drempel
     agent:  "https://thebalihouses.com/contact",   // overige gekwalificeerde leads
-  },
-  // Agenda in de popup (bijvoorbeeld een Calendly-link). Leeg = knop naar de booking-pagina hierboven.
-  calendarUrl: {
-    julius: "",
-    agent:  "",
   },
   ebookUrl: "https://thebalihouses.com",
   autoOpenQuiz: true,          // quiz opent als popup na het laden
@@ -453,8 +427,8 @@ const CONFIG = {
 };
 
 /* ============================ state & helpers ============================ */
-const A = { pain:null, box3:null, goal:null, budgetBand:null, source:null, loan:null, live:null, ownWeeks:null };
-const FIELDS = ['first','last','budgetExact','loanAmount','loanRate','email','cc','phone'];
+const A = { pain:null, goal:null, source:null, loan:null, live:null, ownWeeks:null };
+const FIELDS = ['first','budgetExact','loanAmount','loanRate','email','cc','phone'];
 const steps = [...document.querySelectorAll('.step')];
 const QUESTIONS = steps.findIndex(s=>s.dataset.step==='result'); // aantal vraagstappen voor de voortgangsbalk
 let lastInput = null, lastRoute = null;
@@ -463,7 +437,7 @@ const eur = n => new Intl.NumberFormat('nl-NL',{style:'currency',currency:'EUR',
 const pct = n => (n*100).toLocaleString('nl-NL',{maximumFractionDigits:1})+'%';
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-const KEY = 'tbh_quiz_v1';
+const KEY = 'tbh_quiz_v2';
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 /* --- voortgang bewaren: sluiten met X behoudt de antwoorden --- */
@@ -520,12 +494,11 @@ document.querySelectorAll('.opts').forEach(g=>{
     g.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
     b.classList.add('sel');
     A[g.dataset.key] = b.dataset.v;
-    if(g.dataset.key==='budgetBand'){ $('budgetExact').value=''; save(); setTimeout(next,180); return; }
     if(g.dataset.key==='loan'){ $('loanFields').style.display = b.dataset.v==='yes'?'block':'none'; save(); if(b.dataset.v==='no') setTimeout(next,180); return; }
     save(); setTimeout(next,180);
   });
 });
-$('budgetExact').addEventListener('input',()=>{ document.querySelectorAll('[data-key=budgetBand] .opt').forEach(o=>o.classList.remove('sel')); A.budgetBand=null; save(); });
+$('budgetExact').addEventListener('input',()=>{ $('budgetVal').textContent = eur(budget()); save(); });
 FIELDS.forEach(id=>$(id).addEventListener('input',()=>save()));
 $('consent').addEventListener('change',()=>save());
 
@@ -542,6 +515,7 @@ document.addEventListener('keydown',e=>{
 });
 function show(i){
   cur=i; steps.forEach((s,k)=>s.classList.toggle('active',k===i));
+  $('budgetVal').textContent = eur(budget());
   const done = i>=QUESTIONS, auto = steps[i].classList.contains('auto');
   $('bar').parentElement.style.display = done ? 'none' : '';
   $('bar').style.width = ((i+1)/QUESTIONS*100)+'%';
@@ -555,13 +529,14 @@ function show(i){
   if(!done) save();
 }
 function prev(){ if(cur>0) show(cur-1); }
-function budget(){ const x=+$('budgetExact').value; return x>0?x:+A.budgetBand; }
+/* slider: 0..1000 loopt logaritmisch van € 100.000 tot € 2.500.000, zodat de lagere bedragen meer ruimte krijgen */
+const BMIN=100000, BMAX=2500000;
+function budget(){ const p=+$('budgetExact').value/1000; const v=BMIN*Math.pow(BMAX/BMIN,p); const st=v<500000?5000:v<1000000?10000:25000; return Math.min(BMAX,Math.max(BMIN,Math.round(v/st)*st)); }
 function validate(){
   const s = steps[cur].dataset.step, fail = id=>{$(id).style.display='block';return false;};
-  if(s==='pain' || s==='box3' || s==='goal') return !!A[s];
-  if(s==='name') return ($('first').value.trim() && $('last').value.trim()) || fail('err-name');
-  if(s==='email') return /^\S+@\S+\.\S+$/.test($('email').value.trim()) || fail('err-email');
-  if(s==='phone') return ($('phone').value.replace(/\D/g,'').length>=6 && $('consent').checked) || fail('err-phone');
+  if(s==='pain' || s==='goal') return !!A[s];
+  if(s==='name') return !!$('first').value.trim() || fail('err-name');
+  if(s==='contact') return (/^\S+@\S+\.\S+$/.test($('email').value.trim()) && $('phone').value.replace(/\D/g,'').length>=6 && $('consent').checked) || fail('err-contact');
   if(s==='budget') return budget()>0 || fail('err-budget');
   if(s==='source') return !!A.source;
   if(s==='loan'){ if(!A.loan) return false; if(A.loan==='yes'){ const l=+$('loanAmount').value; return (l>0 && l<budget()) || fail('err-loan'); } return true; }
@@ -622,9 +597,9 @@ function calc(input){
 /* ============================== results UI =============================== */
 function finish(){
   const input = {
-    first:$('first').value.trim(), last:$('last').value.trim(), email:$('email').value.trim(),
+    first:$('first').value.trim(), email:$('email').value.trim(),
     phone:($('cc').value==='+'?'':$('cc').value+' ')+$('phone').value.trim(),
-    pain:A.pain, box3:A.box3, goal:A.goal,
+    pain:A.pain, goal:A.goal,
     budget:budget(), source:A.source, loan:A.loan==='yes'?+$('loanAmount').value:0, rate:A.loan==='yes'?(+$('loanRate').value||0)/100:0,
     live:A.live, ownWeeks:+A.ownWeeks
   };
@@ -650,7 +625,8 @@ function popupResult(i, r){
       <div><b>${eur(r.nlRental)}</b>Verhuurwoning NL</div>
       <div><b>${eur(r.nlSavings)}</b>Spaarrekening NL</div>
     </div>
-    <button class="go" onclick="toCalendar()">Wil je 3 projecten zien die we nu te koop hebben en die dit kunnen halen? Plan een gesprek</button>
+    <h2 class="cta-t">Bekijk 3 beschikbare projecten die dit rendement kunnen behalen</h2>
+    <button class="go" onclick="openBooking()">Plan een gesprek</button>
     <button class="skip" onclick="closeQuiz()">Eerst mijn volledige berekening bekijken</button>
   </div>`;
 }
@@ -661,20 +637,16 @@ function popupEbook(i){
     <a class="go" href="${CONFIG.ebookUrl}" target="_blank" rel="noopener">Download het e-book</a>
   </div>`;
 }
-function toCalendar(){
-  const url = CONFIG.calendarUrl[lastRoute==='julius'?'julius':'agent'];
-  if(url){
-    const u = new URL(url);
-    u.searchParams.set('name', lastInput.first+' '+lastInput.last);
-    u.searchParams.set('email', lastInput.email);
-    $('calBox').innerHTML = `<iframe class="cal" src="${esc(u.toString())}" title="Plan een gesprek"></iframe>`;
-  } else {
-    const booking = CONFIG.booking[lastRoute==='julius'?'julius':'agent'];
-    $('calBox').innerHTML = `<a class="go" style="margin-top:20px" href="${booking}" target="_blank" rel="noopener">Kies een moment</a>`;
-  }
-  show(QUESTIONS+1);
+/* ---------------------------------------------------------------------------
+   AGENDA: hier koppelt de developer de eigen booking-tool (popup).
+   lastInput bevat voornaam, e-mail, telefoon en alle antwoorden; lastRoute is
+   'julius' (budget vanaf CONFIG.routing.juliusFrom) of 'agent'.
+   Tot die tijd opent de knop de contactpagina uit CONFIG.booking.
+   --------------------------------------------------------------------------- */
+function openBooking(){
+  const url = CONFIG.booking[lastRoute==='julius'?'julius':'agent'];
+  window.open(url, '_blank', 'noopener');
 }
-function openCalendar(){ $('modal').classList.add('open'); document.body.style.overflow='hidden'; toCalendar(); }
 function renderResults(input, route){
   lastInput = input; lastRoute = route;
   $('landing').style.display='none';
@@ -742,7 +714,7 @@ function resultView(i, r, route){
       <li>De juridische structuur die bij jouw situatie past</li>
       <li>Antwoord op je vragen over erfpacht, belasting en beheer op afstand</li>
     </ul>
-    <button class="btn-y" onclick="openCalendar()">Plan een meeting</button>
+    <button class="btn-y" onclick="openBooking()">Plan een gesprek</button>
     <p class="small dim" style="margin:16px 0 0">Liever eerst rustig lezen? Je ontvangt dit document ook per e-mail op ${esc(i.email)}.</p>
   </div>
 
