@@ -514,7 +514,7 @@ const CONFIG = {
     high: { label:"Sterk",       grossYield:0.2903, occupancy:0.808 }
   },
   buildM2PerEuro: 0.00052,
-  costs: { ota:0.16, management:0.15, pb1:0.10, runningPerM2:55, notary:0.01, tbhFee:0.015, dueDiligence:8000000/19400 },
+  costs: { ota:0.16, management:0.15, pb1:0.10, runningPerM2:55, notary:0.01, tbhFee:0.015, dueDiligence:8000000/19400, ptpma:3600 },
   tax: {
     idWithholding: 0.10,        // Indonesische bronheffing op wat naar de eigenaar gaat (PPh final art. 4(2))
     idCorporate: 0.11,          // holding-route: winstbelasting PT PMA (22% met 50% korting art. 31E)
@@ -681,13 +681,14 @@ function calc(input){
     const gross = grossFull - ownUse;
     const adr = grossFull / (365 * s.occupancy);
     const ota = gross*C.ota, mgmt = gross*C.management, pb1 = gross*C.pb1, running = m2*C.runningPerM2;
-    const netBeforeTax = gross - ota - mgmt - pb1 - running;
+    const ptpma = route==='company' ? C.ptpma : 0; // jaarlijkse kosten PT PMA (boekhouding, aangiftes), aftrekbaar vóór de 11%
+    const netBeforeTax = gross - ota - mgmt - pb1 - running - ptpma;
     const withholding = Math.max(0, netBeforeTax) * (route==='company' ? T.idCorporate : T.idWithholding);
     const afterId = netBeforeTax - withholding;
     const afterInterest = afterId - interest;
     const nlTax = route==='company' ? 0 : afterInterest * T.nlPrivateOnBali; // holding: winst blijft in de PT PMA, box 2 pas bij uitkering
     const net = afterInterest - nlTax;
-    out[k] = { label:s.label, occupancy:s.occupancy, adr, grossFull, ownUse, gross, ota, mgmt, pb1, running,
+    out[k] = { label:s.label, occupancy:s.occupancy, adr, grossFull, ownUse, gross, ota, mgmt, pb1, running, ptpma,
                netBeforeTax, withholding, interest, nlTax, net, monthly:net/12,
                yieldOwn: net/ownMoney, yieldPrice: afterId/price };
   }
@@ -790,7 +791,7 @@ function resultView(i, r, route){
   const routeTxt = r.route==='company' ? 'vanuit je bedrijf' : 'vanuit je privévermogen';
   const notes = [];
   if(i.source==='unsure') notes.push('Je weet nog niet of je privé of zakelijk investeert. Deze berekening gaat uit van privévermogen; in het gesprek zetten we beide routes naast elkaar.');
-  if(r.route==='company') notes.push('Investeer je vanuit je holding, dan koopt een Indonesische PT PMA de villa. Over de winst betaalt de PT PMA 11% Indonesische winstbelasting. De winst blijft in de structuur staan, dus er is geen Nederlandse belasting zolang je het niet privé uitkeert. Keer je het later uit aan jezelf, dan betaal je box 2 belasting. De kosten van de PT PMA zelf, zoals boekhouding, bespreken we in het gesprek.');
+  if(r.route==='company') notes.push('Investeer je vanuit je holding, dan koopt een Indonesische PT PMA de villa. Over de winst betaalt de PT PMA 11% Indonesische winstbelasting. De winst blijft in de structuur staan, dus er is geen Nederlandse belasting zolang je het niet privé uitkeert. Keer je het later uit aan jezelf, dan betaal je box 2 belasting. De kosten van de PT PMA zelf, ongeveer € 3.600 per jaar voor onder meer boekhouding en aangiftes, zijn al afgetrokken.');
   if(r.route==='private') notes.push('Bij aankoop in privénaam werken we met een lokale beheermaatschappij. Over wat naar jou wordt overgemaakt wordt 10% Indonesische belasting ingehouden. Volgens het belastingverdrag tussen Nederland en Indonesië (artikel 6) is Indonesië heffingsbevoegd over de villa, waardoor de villa in deze berekening niet in Nederlandse box 3 valt.');
   if(i.live==='bali') notes.push('Je wilt (op termijn) op Bali of Lombok wonen. Dan word je Indonesisch belastingplichtig en verandert de fiscale berekening. Deze schatting gaat nog uit van wonen in Nederland; in het gesprek rekenen we jouw situatie na emigratie door.');
   if(r.loan>0) notes.push(`Je financiert ${eur(r.loan)} tegen ${pct(i.rate)} rente. Dat kost ${eur(r.interest)} per jaar en is al van de opbrengst afgetrokken. Het rendement is berekend op je eigen inleg van ${eur(r.ownMoney)}.`);
@@ -854,6 +855,7 @@ function resultView(i, r, route){
       ${row('Beheer (15%)','mgmt',true)}
       ${row('Hotel- en toeristenbelasting (10%)','pb1',true)}
       ${row('Vaste lasten (energie, personeel, onderhoud)','running',true)}
+      ${r.route==='company'?row('Kosten PT PMA (boekhouding, aangiftes)','ptpma',true):''}
       ${row('Netto vóór belasting','netBeforeTax',false,'tot')}
       <tr class="sec"><td colspan="4">Belasting en financiering</td></tr>
       ${row(idTaxLabel,'withholding',true)}
