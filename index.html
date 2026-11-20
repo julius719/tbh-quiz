@@ -497,7 +497,7 @@ const CONFIG = {
     ["Leasehold of freehold: wat is beter?",
      "Freehold is voor buitenlanders niet direct beschikbaar. Leasehold geeft je het gebruiksrecht voor een vaste periode, vaak 25 jaar met een optie tot verlenging. Belangrijk is dat de looptijd, verlenging en prijs goed in het contract staan. Dat controleren wij in de due diligence."],
     ["Hoe zit het met belasting?",
-     "Bij aankoop in privénaam werkt de villa via een lokale beheermaatschappij. Over wat naar jou wordt uitbetaald wordt 10% Indonesische belasting ingehouden. Volgens het belastingverdrag tussen Nederland en Indonesië is Indonesië heffingsbevoegd over het vastgoed. Investeer je vanuit een BV, dan kijken we per situatie naar de beste structuur."],
+     "Bij aankoop in privénaam werkt de villa via een lokale beheermaatschappij. Over wat naar jou wordt uitbetaald wordt 10% Indonesische belasting ingehouden. Volgens het belastingverdrag tussen Nederland en Indonesië is Indonesië heffingsbevoegd over het vastgoed. Investeer je vanuit je holding, dan koopt een Indonesische PT PMA de villa. Die betaalt 11% winstbelasting en de winst blijft in de structuur, tot je die privé uitkeert en box 2 betaalt."],
     ["Ik woon in Nederland. Hoe werkt de villa op afstand?",
      "Een beheermaatschappij regelt de verhuur, gasten, schoonmaak en onderhoud. Jij ontvangt de netto opbrengst op je Nederlandse rekening. Wij blijven na de aankoop je vaste aanspreekpunt op Bali."],
     ["Hoe verdienen jullie geld?",
@@ -517,6 +517,7 @@ const CONFIG = {
   costs: { ota:0.16, management:0.15, pb1:0.10, runningPerM2:55, notary:0.01, tbhFee:0.015, dueDiligence:8000000/19400 },
   tax: {
     idWithholding: 0.10,        // Indonesische bronheffing op wat naar de eigenaar gaat (PPh final art. 4(2))
+    idCorporate: 0.11,          // holding-route: winstbelasting PT PMA (22% met 50% korting art. 31E)
     nlPrivateOnBali: 0,         // box 3 vrijgesteld via het belastingverdrag (art. 6), TBH-structuur privénaam
     vpbLow: 0.19, vpbHigh: 0.258, vpbBracket: 200000, // conservatief: Vpb zonder verrekening
     box3Rate: 0.36, box3Savings: 0.0128, box3Other: 0.06
@@ -681,10 +682,10 @@ function calc(input){
     const adr = grossFull / (365 * s.occupancy);
     const ota = gross*C.ota, mgmt = gross*C.management, pb1 = gross*C.pb1, running = m2*C.runningPerM2;
     const netBeforeTax = gross - ota - mgmt - pb1 - running;
-    const withholding = Math.max(0, netBeforeTax) * T.idWithholding;
+    const withholding = Math.max(0, netBeforeTax) * (route==='company' ? T.idCorporate : T.idWithholding);
     const afterId = netBeforeTax - withholding;
     const afterInterest = afterId - interest;
-    const nlTax = route==='company' ? vpb(afterInterest) : afterInterest * T.nlPrivateOnBali;
+    const nlTax = route==='company' ? 0 : afterInterest * T.nlPrivateOnBali; // holding: winst blijft in de PT PMA, box 2 pas bij uitkering
     const net = afterInterest - nlTax;
     out[k] = { label:s.label, occupancy:s.occupancy, adr, grossFull, ownUse, gross, ota, mgmt, pb1, running,
                netBeforeTax, withholding, interest, nlTax, net, monthly:net/12,
@@ -789,7 +790,7 @@ function resultView(i, r, route){
   const routeTxt = r.route==='company' ? 'vanuit je bedrijf' : 'vanuit je privévermogen';
   const notes = [];
   if(i.source==='unsure') notes.push('Je weet nog niet of je privé of zakelijk investeert. Deze berekening gaat uit van privévermogen; in het gesprek zetten we beide routes naast elkaar.');
-  if(r.route==='company') notes.push('Voor investeren vanuit een BV rekenen we hier voorzichtig: Nederlandse vennootschapsbelasting over het volledige resultaat, zonder verrekening van de Indonesische bronheffing. Afhankelijk van je structuur kan dat gunstiger uitvallen. Dat beoordelen we per situatie.');
+  if(r.route==='company') notes.push('Investeer je vanuit je holding, dan koopt een Indonesische PT PMA de villa. Over de winst betaalt de PT PMA 11% Indonesische winstbelasting. De winst blijft in de structuur staan, dus er is geen Nederlandse belasting zolang je het niet privé uitkeert. Keer je het later uit aan jezelf, dan betaal je box 2 belasting. De kosten van de PT PMA zelf, zoals boekhouding, bespreken we in het gesprek.');
   if(r.route==='private') notes.push('Bij aankoop in privénaam werken we met een lokale beheermaatschappij. Over wat naar jou wordt overgemaakt wordt 10% Indonesische belasting ingehouden. Volgens het belastingverdrag tussen Nederland en Indonesië (artikel 6) is Indonesië heffingsbevoegd over de villa, waardoor de villa in deze berekening niet in Nederlandse box 3 valt.');
   if(i.live==='bali') notes.push('Je wilt (op termijn) op Bali of Lombok wonen. Dan word je Indonesisch belastingplichtig en verandert de fiscale berekening. Deze schatting gaat nog uit van wonen in Nederland; in het gesprek rekenen we jouw situatie na emigratie door.');
   if(r.loan>0) notes.push(`Je financiert ${eur(r.loan)} tegen ${pct(i.rate)} rente. Dat kost ${eur(r.interest)} per jaar en is al van de opbrengst afgetrokken. Het rendement is berekend op je eigen inleg van ${eur(r.ownMoney)}.`);
@@ -797,7 +798,8 @@ function resultView(i, r, route){
 
   const row=(name,key,neg,cls='')=>`<tr class="${cls}"><td>${name}</td>${['low','mid','high'].map(k=>`<td class="${neg?'neg':''}">${neg?'- ':''}${eur(r.s[k][key])}</td>`).join('')}</tr>`;
   const rowPct=(name,fn)=>`<tr class="sub"><td>${name}</td>${['low','mid','high'].map(k=>`<td>${fn(r.s[k])}</td>`).join('')}</tr>`;
-  const nlTaxLabel = r.route==='company' ? 'Nederlandse vennootschapsbelasting' : 'Nederlandse box 3 over de villa';
+  const nlTaxLabel = r.route==='company' ? 'Nederlandse belasting (box 2 pas bij uitkering)' : 'Nederlandse box 3 over de villa';
+  const idTaxLabel = r.route==='company' ? 'Indonesische winstbelasting PT PMA (11%)' : 'Indonesische bronheffing (10%)';
   const booking = route==='julius' ? CONFIG.booking.julius : CONFIG.booking.agent;
   const who = route==='julius' ? 'Julius Sanders, oprichter van The Bali Houses' : 'een van onze adviseurs';
 
@@ -854,7 +856,7 @@ function resultView(i, r, route){
       ${row('Vaste lasten (energie, personeel, onderhoud)','running',true)}
       ${row('Netto vóór belasting','netBeforeTax',false,'tot')}
       <tr class="sec"><td colspan="4">Belasting en financiering</td></tr>
-      ${row('Indonesische bronheffing (10%)','withholding',true)}
+      ${row(idTaxLabel,'withholding',true)}
       ${r.loan>0?row('Rente op lening','interest',true):''}
       ${row(nlTaxLabel,'nlTax',true)}
       ${row('Netto per jaar','net',false,'tot')}
